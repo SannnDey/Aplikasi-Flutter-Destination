@@ -18,7 +18,7 @@ class TourismPlace {
     required this.ticketPrice,
     required this.imageAsset,
     required this.imageUrls,
-    required this.reviews, 
+    required this.reviews,
   });
 }
 

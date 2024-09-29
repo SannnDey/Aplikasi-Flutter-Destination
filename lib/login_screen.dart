@@ -11,19 +11,17 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
+
   // Dummy data for login
   final String _dummyEmail = "sann";
   final String _dummyPassword = "123";
 
-  
   bool _isLoading = false;
 
   void _login() async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    
     setState(() {
       _isLoading = true;
     });
@@ -37,9 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Invalid email or password'),
-          duration: const Duration(seconds: 2),
+        const SnackBar(
+          content: Text('Invalid email or password'),
+          duration: Duration(seconds: 2),
           backgroundColor: Colors.red,
         ),
       );
@@ -120,9 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         // Handle Google sign in
                       },
-                      child: CircleAvatar(
+                      child: const CircleAvatar(
                         backgroundColor: Colors.red,
-                        child: const Icon(Icons.g_mobiledata, color: Colors.white),
+                        child: Icon(Icons.g_mobiledata, color: Colors.white),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -130,9 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         // Handle Facebook sign in
                       },
-                      child: CircleAvatar(
+                      child: const CircleAvatar(
                         backgroundColor: Colors.blue,
-                        child: const Icon(Icons.facebook, color: Colors.white),
+                        child: Icon(Icons.facebook, color: Colors.white),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -140,9 +138,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         // Handle Email sign in
                       },
-                      child: CircleAvatar(
+                      child: const CircleAvatar(
                         backgroundColor: Colors.grey,
-                        child: const Icon(Icons.email, color: Colors.white),
+                        child: Icon(Icons.email, color: Colors.white),
                       ),
                     ),
                   ],

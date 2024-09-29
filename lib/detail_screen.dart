@@ -146,7 +146,7 @@ class _DetailScreenState extends State<DetailScreen> {
           'Rating: ',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        for (int i = 0; i < 5; i++) 
+        for (int i = 0; i < 5; i++)
           const Icon(Icons.star, color: Colors.yellow),
       ],
     );
@@ -169,7 +169,7 @@ class _DetailScreenState extends State<DetailScreen> {
           controller: _commentController,
           decoration: InputDecoration(
             labelText: 'Write your Review...',
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.orange[800]!, width: 2.0),
             ),
@@ -192,11 +192,11 @@ class _DetailScreenState extends State<DetailScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Dialog(
+        return const Dialog(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0),
             child: Row(
-              children: const [
+              children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 20),
                 Text('Submitting...'),
@@ -315,7 +315,8 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle_outline, color: Colors.green[600], size: 40),
+                Icon(Icons.check_circle_outline,
+                    color: Colors.green[600], size: 40),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

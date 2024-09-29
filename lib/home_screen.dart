@@ -12,7 +12,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<bool> isFavorite = List<bool>.filled(tourismPlaceList.length, false);
+  final List<bool> isFavorite =
+      List<bool>.filled(tourismPlaceList.length, false);
   List<TourismPlace> displayedPlaces = tourismPlaceList;
   final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 0;
@@ -38,10 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             displayedPlaces = tourismPlaceList
                 .where((place) =>
-                    place.name.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                    place.location.toLowerCase().contains(_searchController.text.toLowerCase()))
+                    place.name
+                        .toLowerCase()
+                        .contains(_searchController.text.toLowerCase()) ||
+                    place.location
+                        .toLowerCase()
+                        .contains(_searchController.text.toLowerCase()))
                 .toList();
-            _isLoading = false; 
+            _isLoading = false;
           });
         });
       }
@@ -135,112 +140,110 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _logout() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Logout Confirmation'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop(); 
-            },
-          ),
-          TextButton(
-            child: const Text('Logout'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _showLoadingDialog();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showLoadingDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        content: Row(
-          children: const [
-            CircularProgressIndicator(),
-            SizedBox(width: 20),
-            Text('Please wait...'),
-          ],
-        ),
-      );
-    },
-  );
-
-  Future.delayed(const Duration(seconds: 2), () {
-    Navigator.of(context).pop(); 
-    _showLogoutMessage(); 
-  });
-}
-
-void _showLogoutMessage() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        backgroundColor: Colors.orange[50],
-        title: Row(
-          children: [
-            const Icon(
-              Icons.exit_to_app,
-              color: Colors.orange,
-              size: 28,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Logout Confirmation'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            const SizedBox(width: 10),
-            const Text(
-              'Goodbye!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
-              ),
+            TextButton(
+              child: const Text('Logout'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showLoadingDialog();
+              },
             ),
           ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'See You Next Time!',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[800]!),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-
-  Future.delayed(const Duration(seconds: 3), () {
-    Navigator.of(context).pop(); 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
+        );
+      },
     );
-  });
-}
+  }
 
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Please wait...'),
+            ],
+          ),
+        );
+      },
+    );
 
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pop();
+      _showLogoutMessage();
+    });
+  }
+
+  void _showLogoutMessage() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Colors.orange[50],
+          title: const Row(
+            children: [
+              Icon(
+                Icons.exit_to_app,
+                color: Colors.orange,
+                size: 28,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Goodbye!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'See You Next Time!',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 20),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[800]!),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pop();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+    });
+  }
 
   Widget buildHomeContent() {
     return Column(
@@ -289,8 +292,10 @@ void _showLogoutMessage() {
                     : Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                MediaQuery.of(context).size.width < 600 ? 2 : 3,
                             crossAxisSpacing: 20,
                             mainAxisSpacing: 20,
                           ),
@@ -302,7 +307,8 @@ void _showLogoutMessage() {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => DetailScreen(place: place),
+                                    builder: (context) =>
+                                        DetailScreen(place: place),
                                   ),
                                 );
                               },
@@ -314,11 +320,13 @@ void _showLogoutMessage() {
                                       borderRadius: BorderRadius.circular(25),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
                                       children: [
                                         Expanded(
                                           child: ClipRRect(
-                                            borderRadius: const BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               topLeft: Radius.circular(25),
                                               topRight: Radius.circular(25),
                                             ),
@@ -331,7 +339,8 @@ void _showLogoutMessage() {
                                         Padding(
                                           padding: const EdgeInsets.all(12.0),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 place.name,
@@ -359,16 +368,22 @@ void _showLogoutMessage() {
                                     top: 10,
                                     right: 10,
                                     child: AnimatedSwitcher(
-                                      duration: const Duration(milliseconds: 300),
+                                      duration:
+                                          const Duration(milliseconds: 300),
                                       child: IconButton(
                                         key: ValueKey<bool>(isFavorite[index]),
                                         icon: Icon(
-                                          isFavorite[index] ? Icons.favorite : Icons.favorite_border,
-                                          color: isFavorite[index] ? Colors.red : Colors.grey,
+                                          isFavorite[index]
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: isFavorite[index]
+                                              ? Colors.red
+                                              : Colors.grey,
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            isFavorite[index] = !isFavorite[index];
+                                            isFavorite[index] =
+                                                !isFavorite[index];
                                           });
                                         },
                                       ),
@@ -387,7 +402,8 @@ void _showLogoutMessage() {
 
   Widget buildFavoritesContent() {
     final List<TourismPlace> favoritePlaces = tourismPlaceList
-        .where((place) => isFavorite[tourismPlaceList.indexOf(place)]).toList();
+        .where((place) => isFavorite[tourismPlaceList.indexOf(place)])
+        .toList();
 
     return FavoritesScreen(favoritePlaces: favoritePlaces);
   }

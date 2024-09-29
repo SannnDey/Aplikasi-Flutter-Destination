@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/model/tourism_place.dart';
-import 'package:myapp/detail_screen.dart'; 
+import 'package:myapp/detail_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   final List<TourismPlace> favoritePlaces;
@@ -17,7 +17,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   void initState() {
     super.initState();
-    _favoritePlaces = List.from(widget.favoritePlaces); 
+    _favoritePlaces = List.from(widget.favoritePlaces);
   }
 
   void _removeFromFavorites(TourismPlace place) {
@@ -32,7 +32,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       appBar: AppBar(
         title: const Text('Favorites'),
         backgroundColor: Colors.orange[800],
-        elevation: 0, 
+        elevation: 0,
       ),
       body: Container(
         child: _favoritePlaces.isEmpty
@@ -69,14 +69,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       ),
                       title: Text(
                         place.name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       subtitle: Text(place.location),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           _removeFromFavorites(place);
                         },
