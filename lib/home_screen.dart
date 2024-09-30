@@ -5,7 +5,9 @@ import 'package:myapp/login_screen.dart';
 import 'package:myapp/model/tourism_place.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String userEmail;
+
+  const HomeScreen({required this.userEmail, super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -70,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Colors.orange[800],
       ),
-      body: _currentIndex == 0 ? buildHomeContent() : buildFavoritesContent(),
+      body: _currentIndex == 0 ? buildHomeContent() : buildFavoritesContent(widget.userEmail),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -307,8 +309,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        DetailScreen(place: place),
+                                    builder: (context) => DetailScreen(
+                                      place: place,
+                                      userEmail: widget
+                                          .userEmail, // Pass the userEmail
+                                    ),
                                   ),
                                 );
                               },
@@ -400,11 +405,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildFavoritesContent() {
+  Widget buildFavoritesContent(String userEmail) {
+    // Accept userEmail as a parameter
     final List<TourismPlace> favoritePlaces = tourismPlaceList
         .where((place) => isFavorite[tourismPlaceList.indexOf(place)])
         .toList();
 
-    return FavoritesScreen(favoritePlaces: favoritePlaces);
+    return FavoritesScreen(
+      favoritePlaces: favoritePlaces,
+      userEmail: userEmail, // Pass userEmail to FavoritesScreen
+    );
   }
 }

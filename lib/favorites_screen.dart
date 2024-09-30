@@ -4,8 +4,9 @@ import 'package:myapp/detail_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   final List<TourismPlace> favoritePlaces;
+  final String userEmail;
 
-  const FavoritesScreen({required this.favoritePlaces, super.key});
+  const FavoritesScreen({required this.favoritePlaces, required this.userEmail, super.key});
 
   @override
   _FavoritesScreenState createState() => _FavoritesScreenState();
@@ -85,7 +86,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailScreen(place: place),
+                            builder: (context) => DetailScreen(
+                              place: place,
+                              userEmail: widget.userEmail, // Pass the userEmail
+                            ),
                           ),
                         );
                       },
