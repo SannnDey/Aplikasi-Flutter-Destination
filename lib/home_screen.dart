@@ -3,7 +3,6 @@ import 'package:myapp/detail_screen.dart';
 import 'package:myapp/favorites_screen.dart';
 import 'package:myapp/login_screen.dart';
 import 'package:myapp/model/tourism_place.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart'; // Import carousel_slider package
 import 'package:video_player/video_player.dart';
 
@@ -23,8 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 0;
   final bool _isLoading = false;
-
-  late YoutubePlayerController _youtubeController;
   // Add VideoPlayerController
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
