@@ -17,11 +17,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<bool> isFavorite =
-  List<bool>.filled(tourismPlaceList.length, false);
+      List<bool>.filled(tourismPlaceList.length, false);
   List<TourismPlace> displayedPlaces = tourismPlaceList;
   final TextEditingController _searchController = TextEditingController();
   int _currentIndex = 0;
   final bool _isLoading = false;
+  bool showAll = false;
   // Add VideoPlayerController
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
@@ -176,6 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 12.0, horizontal: 20.0),
                 ),
+                onChanged: (value) {
+                  _onSearchChanged();
+                },
               ),
             ),
           ),
@@ -184,203 +188,121 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Carousel Slider
-              buildCarouselSlider(),
-              const SizedBox(height: 10),
+              // Check if search is active
+              if (_searchController.text.isEmpty) ...[
+                // Show the Carousel Slider and Featured Video only when no search is active
+                buildCarouselSlider(),
+                const SizedBox(height: 10),
 
-              // Divider for Featured Video
-              _buildSectionDivider('Featured Video'),
+                _buildSectionDivider('Featured Video'),
 
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Column(
-                  children: [
-                    // Use FutureBuilder to ensure the video is initialized
-                    FutureBuilder(
-                      future: _initializeVideoPlayerFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          // Play the video automatically
-                          _videoController
-                              .play(); // Add this line to autoplay the video
-
-                          return AspectRatio(
-                            aspectRatio: _videoController.value.aspectRatio,
-                            child: VideoPlayer(_videoController),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
-                    ),
-                    // Video Controls
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(0, 2),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Discover Bali through this video showcasing the most beautiful spots!',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  _videoController.value.isPlaying
-                                      ? Icons.pause
-                                      : Icons.play_arrow,
-                                  color: Colors.orange,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    // Toggle play/pause
-                                    _videoController.value.isPlaying
-                                        ? _videoController.pause()
-                                        : _videoController.play();
-                                  });
-                                },
-                              ),
-                              // Rewind 10 seconds button
-                              IconButton(
-                                icon: Icon(
-                                  Icons.replay_10,
-                                  color: Colors.orange,
-                                ),
-                                onPressed: () {
-                                  final currentPosition =
-                                      _videoController.value.position;
-                                  _videoController.seekTo(
-                                    currentPosition - Duration(seconds: 10),
-                                  );
-                                },
-                              ),
-                              // Forward 10 seconds button
-                              IconButton(
-                                icon: Icon(
-                                  Icons.forward_10,
-                                  color: Colors.orange,
-                                ),
-                                onPressed: () {
-                                  final currentPosition =
-                                      _videoController.value.position;
-                                  _videoController.seekTo(
-                                    currentPosition + Duration(seconds: 10),
-                                  );
-                                },
-                              ),
-                              // Mute/Unmute button
-                              IconButton(
-                                icon: Icon(
-                                  _videoController.value.volume == 0
-                                      ? Icons.volume_off
-                                      : Icons.volume_up,
-                                  color: Colors.orange,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    // Toggle mute/unmute
-                                    _videoController.value.volume == 0
-                                        ? _videoController
-                                            .setVolume(1.0) // Unmute
-                                        : _videoController
-                                            .setVolume(0.0); // Mute
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              // Divider for Best Attractions
-              _buildSectionDivider('Explore the Best Attractions'),
-
-              // Additional information about attractions
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 10.0),
-                child: Text(
-                  'Bali is home to a wide variety of stunning attractions. From beautiful beaches to lush rice terraces, explore the best that Bali has to offer. Whether you are looking for adventure, relaxation, or cultural experiences, you will find it all here.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  textAlign: TextAlign.justify,
-                ),
-              ),
-
-              // Adding a card for highlighting a popular attraction
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          'images/terasering.jpg', // Gambar lokal
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
+                      FutureBuilder(
+                        future: _initializeVideoPlayerFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            _videoController.play();
+                            return AspectRatio(
+                              aspectRatio: _videoController.value.aspectRatio,
+                              child: VideoPlayer(_videoController),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0, 2),
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(12.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Bali Rice Terraces',
+                              'Discover Bali through this video showcasing the most beautiful spots!',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
                               ),
+                              textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Explore the stunning rice terraces of Bali, a breathtaking sight that offers both beauty and tranquility.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                              textAlign: TextAlign.justify,
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    _videoController.value.isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                    color: Colors.orange,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _videoController.value.isPlaying
+                                          ? _videoController.pause()
+                                          : _videoController.play();
+                                    });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.replay_10,
+                                      color: Colors.orange),
+                                  onPressed: () {
+                                    final currentPosition =
+                                        _videoController.value.position;
+                                    _videoController.seekTo(
+                                      currentPosition - Duration(seconds: 10),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.forward_10,
+                                      color: Colors.orange),
+                                  onPressed: () {
+                                    final currentPosition =
+                                        _videoController.value.position;
+                                    _videoController.seekTo(
+                                      currentPosition + Duration(seconds: 10),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    _videoController.value.volume == 0
+                                        ? Icons.volume_off
+                                        : Icons.volume_up,
+                                    color: Colors.orange,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _videoController.value.volume == 0
+                                          ? _videoController.setVolume(1.0)
+                                          : _videoController.setVolume(0.0);
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -388,9 +310,68 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-              ),
 
-              // The grid view of tourism places
+                const SizedBox(height: 15),
+                _buildSectionDivider('Explore the Best Attractions'),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10.0),
+                  child: Text(
+                    'Bali is home to a wide variety of stunning attractions. From beautiful beaches to lush rice terraces, explore the best that Bali has to offer. Whether you are looking for adventure, relaxation, or cultural experiences, you will find it all here.',
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
+
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            'images/terasering.jpg',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Bali Rice Terraces',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'Explore the stunning rice terraces of Bali, a breathtaking sight that offers both beauty and tranquility.',
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.black54),
+                                textAlign: TextAlign.justify,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              // Show the Tourism GridView regardless of search status
               buildTourismGridView(),
               const SizedBox(height: 10),
             ],
@@ -496,11 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.search_off,
-                      size: 100,
-                      color: Colors.grey[400],
-                    ),
+                    Icon(Icons.search_off, size: 100, color: Colors.grey[400]),
                     const SizedBox(height: 20),
                     Text(
                       'Oops.. Destination Not Found..',
@@ -515,114 +492,155 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             : Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount:
-                        MediaQuery.of(context).size.width < 600 ? 2 : 3,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                  ),
-                  itemCount: displayedPlaces.length,
-                  itemBuilder: (context, index) {
-                    final TourismPlace place = displayedPlaces[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailScreen(
-                              place: place,
-                              userEmail: widget.userEmail,
-                            ),
+                child: Column(
+                  children: [
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            MediaQuery.of(context).size.width < 600 ? 2 : 3,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                      ),
+                      itemCount: showAll
+                          ? displayedPlaces.length
+                          : (displayedPlaces.length < 6
+                              ? displayedPlaces.length
+                              : 6),
+                      itemBuilder: (context, index) {
+                        final TourismPlace place = displayedPlaces[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailScreen(
+                                  place: place,
+                                  userEmail: widget.userEmail,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Card(
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(25),
+                                          topRight: Radius.circular(25),
+                                        ),
+                                        child: Image.asset(
+                                          place.imageAsset,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            place.name,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.orange[900],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            place.location,
+                                            style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 300),
+                                  child: IconButton(
+                                    key: ValueKey<bool>(isFavorite[index]),
+                                    icon: Icon(
+                                      isFavorite[index]
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isFavorite[index]
+                                          ? Colors.red
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        isFavorite[index] = !isFavorite[index];
+                                      });
+                                      final snackBar = SnackBar(
+                                        content: Text(isFavorite[index]
+                                            ? '${place.name} added to favorites!'
+                                            : '${place.name} removed from favorites!'),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
-                      child: Stack(
-                        children: [
-                          Card(
-                            elevation: 8,
+                    ),
+                    if (displayedPlaces.length > 6)
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: TextButton.icon(
+                          key: ValueKey<bool>(showAll),
+                          onPressed: () {
+                            setState(() {
+                              showAll = !showAll;
+                            });
+                          },
+                          icon: Icon(
+                            showAll ? Icons.arrow_upward : Icons.arrow_downward,
+                            color: Colors.blue,
+                          ),
+                          label: Text(
+                            showAll ? 'See Less' : 'See More',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue[50],
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(25),
-                                      topRight: Radius.circular(25),
-                                    ),
-                                    child: Image.asset(
-                                      place.imageAsset,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        place.name,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.orange[900],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        place.location,
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 20),
                           ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              child: IconButton(
-                                key: ValueKey<bool>(isFavorite[index]),
-                                icon: Icon(
-                                  isFavorite[index]
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: isFavorite[index]
-                                      ? Colors.red
-                                      : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    isFavorite[index] = !isFavorite[index];
-                                  });
-                                  final snackBar = SnackBar(
-                                    content: Text(isFavorite[index]
-                                        ? '${place.name} added to favorites!'
-                                        : '${place.name} removed from favorites!'),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    );
-                  },
+                  ],
                 ),
               );
   }
