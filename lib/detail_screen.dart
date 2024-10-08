@@ -20,7 +20,7 @@ class _DetailScreenState extends State<DetailScreen> {
   final List<File> _selectedImages = [];
   final List<String> _selectedImageUrls = [];
   final ImagePicker _picker = ImagePicker();
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {

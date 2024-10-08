@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:myapp/home_screen.dart';
+import 'package:myapp/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,14 +14,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  // Dummy data for login
-  final String _dummyEmail = "sann";
-  final String _dummyPassword = "123";
-
   bool _isLoading = false;
 
-  void _login() async {
+  Future<void> _login() async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
@@ -26,26 +24,51 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (email == _dummyEmail && password == _dummyPassword) {
-      Navigator.pushReplacement(
-        context,
-         MaterialPageRoute(builder: (context) => HomeScreen(userEmail: email)),
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.1.12/config/login.php'),
+        body: {
+          'email': email,
+          'password': password,
+        },
       );
-    } else {
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+
+        if (responseData['success']) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen(userEmail: email)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseData['message']),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Server error. Please try again later.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid email or password'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text('An error occurred: $e'),
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -71,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email/Username',
+                    prefixIcon: Icon(Icons.email, color: Colors.orange),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -84,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock, color: Colors.orange),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -103,7 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           backgroundColor: Colors.orange,
                         ),
-                        child: const Text('SIGN IN'),
+                        child: const Text(
+                          'SIGN IN',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
                 const SizedBox(height: 20),
                 const Text(
@@ -146,13 +174,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  'Dummy Email: $_dummyEmail\nDummy Password: $_dummyPassword',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Don\'t have an account? '),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

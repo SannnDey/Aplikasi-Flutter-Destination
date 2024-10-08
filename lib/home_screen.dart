@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               color: Colors.black26,
                               offset: Offset(0, 2),
@@ -237,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(12.0),
                         child: Column(
                           children: [
-                            Text(
+                            const Text(
                               'Discover Bali through this video showcasing the most beautiful spots!',
                               style: TextStyle(
                                 fontSize: 16,
@@ -266,24 +266,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.replay_10,
+                                  icon: const Icon(Icons.replay_10,
                                       color: Colors.orange),
                                   onPressed: () {
                                     final currentPosition =
                                         _videoController.value.position;
                                     _videoController.seekTo(
-                                      currentPosition - Duration(seconds: 10),
+                                      currentPosition -
+                                          const Duration(seconds: 10),
                                     );
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.forward_10,
+                                  icon: const Icon(Icons.forward_10,
                                       color: Colors.orange),
                                   onPressed: () {
                                     final currentPosition =
                                         _videoController.value.position;
                                     _videoController.seekTo(
-                                      currentPosition + Duration(seconds: 10),
+                                      currentPosition +
+                                          const Duration(seconds: 10),
                                     );
                                   },
                                 ),
@@ -314,9 +316,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 15),
                 _buildSectionDivider('Explore the Best Attractions'),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 10.0),
+                const Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                   child: Text(
                     'Bali is home to a wide variety of stunning attractions. From beautiful beaches to lush rice terraces, explore the best that Bali has to offer. Whether you are looking for adventure, relaxation, or cultural experiences, you will find it all here.',
                     style: TextStyle(fontSize: 14, color: Colors.black54),
@@ -345,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -356,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: 5),
                               Text(
                                 'Explore the stunning rice terraces of Bali, a breathtaking sight that offers both beauty and tranquility.',
                                 style: TextStyle(
@@ -450,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Text(
                   item['name']!, // Nama destinasi yang ditampilkan
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
